@@ -35,11 +35,6 @@ spec:
       nodeSelector:
         zone: us-east-1a
       
-      tolerations:
-        - key: "node-role.kubernetes.io/control-plane"
-          operator: "Exists"
-          effect: "NoSchedule"
-
 
       volumes:
         - name: vpro-db-data
