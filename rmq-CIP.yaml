@@ -7,7 +7,7 @@ spec:
     app: vpromq01
   ports:
   - port: 15672
-    targetPort: vpromc01-port
+    targetPort: vpromq01-port
     protocol: TCP
 
   type: ClusterIP
