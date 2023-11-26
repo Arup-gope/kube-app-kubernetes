@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
     - port: 3306
-      targetPort: prodb-port
+      targetPort: vprodb-port
       protocol: TCP
 
   selector:
