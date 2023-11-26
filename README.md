@@ -1,11 +1,11 @@
-#Implementing VProfile Web App: Efficiently Deployed within a Kubernetes Cluster Environment.
+# Implementing VProfile Web App: Efficiently Deployed within a Kubernetes Cluster Environment.
 
-##Overview
+## Overview
 Utilizing the 'Containerized VProfile Web App Project' (accessible at https://github.com/Arup-gope/containerized-vpro-web), I successfully deployed this application 
 within a Kubernetes cluster. The primary objective revolves around establishing the VProfile web app in a production environment, ensuring global accessibility for 
 users across the world.
 
-## Pre-requiste && Installation Instructions 
+## Pre-requisites and Installation Instructions 
 I used Kops, a multi-node Kubernetes setup on AWS, to deploy my project. Within this project, I employed images from my previous project's docker repositories. 
 One critical aspect was configuring a MYSQL container requiring a volume for data storage, and I utilized Elastic Block Store (EBS) for this purpose. Additionally, 
 I purchased the domain arupdevops.de specifically for Kubernetes DNS records, enabling me to access the website via a URL.
@@ -16,7 +16,8 @@ a t3.medium instance, while the worker node uses a t3.small instance.
 kops create cluster --name=kubevpro.arupdevops.de --state=s3://vprofile-kops-state-112 --zones=us-east-1a,us-east-1b --node-count=2 --node-size=t3.small 
 --master-size=t3.medium --dns-zone=kubevpro.arupdevops.de --node-volume-size=8 --master-volume-size=8
 ~~~
-
+![Create Cluster](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/b352764c-666c-4f36-8bc4-c2146c18dd5a)
+Fig 01. Cluster Create
 
 Afterward, we'll bring up and validate this cluster using the commands. The Kubernetes cluster's configuration for "kubevpro.arupdevops.de" will reference the state
  stored in the "vprofile-kops-state-112" S3 bucket. This particular S3 bucket was created in the zone where my Kops VM is currently operating.
@@ -26,11 +27,12 @@ kops update cluster --name kubevpro.arupdevops.de --state=s3://vprofile-kops-sta
 
 kops validate cluster --name=kubevpro.arupdevops.de --state=s3://vprofile-kops-state-112 
 ~~~
+![healthy nodes](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/fbe7f80e-d41d-4354-8235-68cb64cc2717)
+Fig 02. Healthy Nodes
 
 
 
-
-The bellow command we can make a new EBS volume in the 'us-east-2a' availability zone on AWS. The volume is 3 GB in size and is set to use the 'gp2' volume type.
+With the below command, we can make a new EBS volume in the 'us-east-2a' availability zone on AWS. The volume is 3 GB in size and is set to use the 'gp2' volume type.
 We need to ensure that our Database Definition file runs in the exact zone where we created our EBS volume. After creating the volume, we'll assign a tag to it and 
 then utilize this tag within the DB definition file.
 ~~~
@@ -280,7 +282,46 @@ spec:
 
 ~~~
 
-##Result
+## Result
+Upon executing the 'kubectl create -f .' command, all four services and deployments are now operational without issues. Accessing via the provided URL from the LoadBalancer works, and thorough testing confirms MySQL, Memcached, and RabbitMQ functionalities are working perfectly.
+
+![ALl wroking](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/355763a2-fb9d-441b-a739-d29aa0d887e8)
+Fig 03. All Pods and Services are working.
+
+
+![aws_Url](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/fdc924c4-46b9-4977-b41f-10e497881a2b)
+Fig 04. The website is accessible through the Load Balancer URL.
+
+
+![MysqlWorks](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/81ae101a-15a8-4156-a910-d33171217d9b)
+Fig 05. MYSQL Works and all data are visible.
+
+![RabbitMqWorks](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/0b8924a4-92e7-4ba0-9953-04de8033c2de)
+Fig 06. RabbitMQ is working.
+
+![MemcachedWorks](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/7735c9fd-758d-4a51-bdfc-3f07705aa9a9)
+![MemcachedWorks2](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/4af16032-5c04-492d-9b5b-e435f734f336)
+Fig 07. The Memcached is working if I reaccess the same profile.
+
+Now, I'm mapping the LoadBalancer URL to Route53 for DNS resolution, allowing universal access to the website via my domain.
+
+![route53updateblog](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/83fe4a10-56ee-4f4e-a972-0c3bc7cfe75f)
+Fig 08. DNS Mapping in Route53.
+
+The website is now accessible through my domain's URL: http://blog.kubevpro.arupdevops.de
+
+![ProfileInNewUrl](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/70861175-8a7a-4982-881d-a79e9ba86033)
+Fig 09. Website accessible through my domain URL
+
+Starting fresh with a new profile sounds like a good way to test things out again. I am creating a new profile to test it.
+
+![newprofiledevops](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/5cc8ab26-6165-4aa6-8712-22267a807e25)
+![ProfileInNewUrl](https://github.com/Arup-gope/kube-app-kubernetes/assets/64405321/27147922-d2a2-4428-8a3d-07c21d0c9d07)
+Fig 10. A new profile was created on the website.
+
+## Acknowledgement
+Acknowledging the invaluable guidance and knowledge imparted by Imran Teli in his remarkable DevOps course has significantly enriched my understanding and skills in this field. 
+
 
 
 
